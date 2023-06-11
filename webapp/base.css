@@ -1,0 +1,55 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+:not(h1):not(h2):not(h3):not(h4) {
+    font-size: 1rem;
+}
+
+:root {
+    --padding: 24px;
+
+    --card-shadow: rgba(0, 0, 0, 0.25) 1px 1px 6px 2px;
+    --card-shape: 16px;
+
+    --label-size: 0.8rem;
+
+    --highlight-color: #245ac2;
+}
+
+input {
+    border-radius: var(--padding);
+    border: 1px solid rgba(0, 0 , 0, 0.5);
+    transition: border-color 100ms;
+
+    padding: caLc(var(--padding) / 4) caLc(var(--padding) / 2);
+    height: 1rem;
+}
+
+input:focus {
+    outline: var(--highlight-color);
+    border-color: var(--highlight-color);
+}
+
+.text-field-label {
+    display: block;
+    margin-left: calc(var(--padding) / 3);
+    font-size: var(--label-size);
+}
+
+button {
+    border: none;
+
+    border-radius: var(--padding);
+    padding: caLc(var(--padding) / 4) caLc(var(--padding) / 2);
+
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+}
+
+button:disabled {
+    opacity: 0.5;
+}
