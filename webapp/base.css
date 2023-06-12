@@ -17,6 +17,7 @@
     --label-size: 0.8rem;
 
     --highlight-color: #245ac2;
+    --error-color: #ec2828;
 }
 
 input {
@@ -47,7 +48,6 @@ button {
 
     display: block;
     width: fit-content;
-    margin-left: auto;
 }
 
 button:disabled {
