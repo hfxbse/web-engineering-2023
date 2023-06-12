@@ -1,6 +1,7 @@
 import router from "./Router.js";
 import {sessionData} from "../Session.js";
 import "../views/AuthenticationForm.js"
+import "../views/NotFound.js"
 
 export class RouteMatch {
     constructor(match, redirect) {
@@ -28,19 +29,31 @@ function isAuthPath() {
     return location.pathname === authPath;
 }
 
+function directoryRoot() {
+    return location.pathname === '/' || location.pathname.startsWith(userRoot())
+}
 
 const routes = {
+    notFound: new Route({
+        tag: 'not-found',
+        match: () => new RouteMatch(true),
+        priority: -1
+    }),
     auth: new Route({
         tag: 'authentication-form',
         attributes: () => ({
             redirect: !isAuthPath() ? location.pathname : '/'
         }),
 
-        match: () => new RouteMatch(!router.activeSession, authPath)
+        match: () => new RouteMatch(!router.activeSession, authPath),
+        priority: 1
     }),
     files: new Route({
         tag: 'div',
-        match: () => new RouteMatch(router.activeSession, isAuthPath() ? userRoot() : undefined)
+        match: () => new RouteMatch(
+            directoryRoot() || location.pathname === authPath && router.activeSession,
+            isAuthPath() || location.pathname === '/' ? userRoot() : undefined
+        ),
     })
 }
 
