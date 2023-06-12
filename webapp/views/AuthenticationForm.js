@@ -131,7 +131,10 @@ export default class AuthenticationForm extends HTMLElement {
         })
 
         if (response.status === 200) {
-            await this.networkExceptionHandler(async () => saveSession((await response.json()).token))
+            await this.networkExceptionHandler(async () => saveSession(
+                username,
+                (await response.json()).token)
+            )
         } else if (response.status === 401) {
             throw new LoginException("Username or password mismatched.", response)
         } else {
