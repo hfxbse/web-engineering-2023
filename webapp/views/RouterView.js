@@ -1,14 +1,16 @@
 import {sessionActive} from "../Session.js";
+import router from "../router/Router.js";
 
-export default class SessionCheck extends HTMLElement {
+
+export default class RouterView extends HTMLElement {
     connectedCallback() {
         const shadow = this.attachShadow({mode: 'closed'})
 
-        shadow.innerHTML = `
-                <div>
-                    <p>Trying to log you in…</p>
-                    <div class="spinner"></div>
-                </div>
+        shadow.innerHTML =  `
+            <div>
+                <p>Trying to log you in…</p>
+                <div class="spinner"></div>
+            </div>
             
             <style>
                 :host {
@@ -53,8 +55,16 @@ export default class SessionCheck extends HTMLElement {
             </style>
         `
 
-        sessionActive().then(active => console.dir({active}))
+        sessionActive().then(() => {
+            window.addEventListener('popstate', () => this.applyView(shadow))
+            router.pushCallback = () => this.applyView(shadow)
+            setTimeout(() => this.applyView(shadow), 250);
+        })
+    }
+
+    applyView(shadow) {
+        shadow.innerHTML = router.route();
     }
 }
 
-customElements.define('session-check', SessionCheck)
+customElements.define('view-router', RouterView)

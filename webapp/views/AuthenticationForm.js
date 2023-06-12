@@ -1,7 +1,22 @@
 import {saveSession} from "../Session.js";
 import "../components/ErrorMessage.js";
+import router from "../router/Router.js";
 
 export default class AuthenticationForm extends HTMLElement {
+    constructor() {
+        super();
+        this.redirect = '/'
+    }
+
+    static get observedAttributes() {
+        return ['redirect'];
+    }
+
+    attributeChangedCallback(key, oldValue, newValue) {
+        if (oldValue === newValue) return;
+        this[key] = newValue;
+    }
+
     connectedCallback() {
         const shadow = this.attachShadow({mode: 'closed'})
 
@@ -95,6 +110,7 @@ export default class AuthenticationForm extends HTMLElement {
 
             try {
                 await this.login(usernameInput.value, passwordInput.value)
+                router.push(this.redirect)
             } catch (e) {
                 await new Promise(resolve => setTimeout(resolve, 250))
 
