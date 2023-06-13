@@ -3,6 +3,7 @@ import '/components/SpinnerIndicator.js'
 import '/components/ErrorMessage.js'
 import '/components/FileList.js'
 import '/components/FileElement.js'
+import '/components/MediaView.js'
 
 export function userRoot() {
     return `/@${sessionData().user}`
@@ -39,7 +40,7 @@ export default class FileBrowser extends HTMLElement {
 
         const placeholder = shadow.querySelector('.placeholder')
 
-        this.fetchDirectory()
+        this.fetchContent()
             .then((content) => this.displayContent(shadow, placeholder, content))
             .catch((e) => this.displayError(placeholder, e))
     }
@@ -47,15 +48,25 @@ export default class FileBrowser extends HTMLElement {
     displayContent(shadow, placeholder, content) {
         shadow.removeChild(placeholder)
 
-        const list = document.createElement(`file-list`)
-        content.forEach((entry) => {
-            const element = document.createElement('file-element')
-            element.setAttribute('file', JSON.stringify(entry))
+        if (content.type === 'directory') {
+            content = content.content
 
-            list.appendChild(element)
-        })
+            const list = document.createElement(`file-list`)
+            content.forEach((entry) => {
+                const element = document.createElement('file-element')
+                element.setAttribute('file', JSON.stringify(entry))
 
-        shadow.appendChild(list)
+                list.appendChild(element)
+            })
+
+            shadow.appendChild(list)
+        } else if (/^(image|audio|video)\//.test(content.type)) {
+            const mediaView = document.createElement('media-view')
+            mediaView.setAttribute('type', content.type)
+            mediaView.setAttribute('href', content.content)
+
+            shadow.appendChild(mediaView)
+        }
     }
 
     displayError(placeholder, error) {
@@ -74,12 +85,20 @@ export default class FileBrowser extends HTMLElement {
         return path
     }
 
-    async fetchDirectory() {
+    async fetchContent() {
         try {
             const response = await fetch(`http://localhost:8080/${this.path()}`, authorizationHeader())
             if (!validateSession(response)) return;
 
-            return await response.json();
+            const contentType = response.headers.get('Content-Type')
+
+            if (contentType.startsWith('text/html'))
+                return {type: 'directory', content: await response.json()}
+            else
+                return {
+                    type: contentType.startsWith('text/plain') ? 'text/plain' : contentType,
+                    content: URL.createObjectURL(await response.blob())
+                }
         } catch (e) {
             throw {message: "Could not load directory due to a network error."}
         }
