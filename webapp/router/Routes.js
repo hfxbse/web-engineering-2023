@@ -25,7 +25,7 @@ function userRoot() {
 }
 
 function isAuthPath() {
-    return location.pathname === authPath;
+    return new RegExp(`^\\${authPath}\/?$`).test(location.pathname)
 }
 
 function directoryRoot() {
@@ -50,7 +50,7 @@ const routes = {
     files: new Route({
         tag: 'div',
         match: () => new RouteMatch(
-            directoryRoot() || location.pathname === authPath && sessionActive(),
+            directoryRoot() || isAuthPath() && sessionActive(),
             isAuthPath() || location.pathname === '/' ? userRoot() : undefined
         ),
     })
