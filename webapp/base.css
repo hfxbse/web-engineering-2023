@@ -8,6 +8,10 @@
     font-size: 1rem;
 }
 
+a {
+    text-decoration: none;
+}
+
 :root {
     --padding: 24px;
 

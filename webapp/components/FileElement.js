@@ -1,3 +1,5 @@
+import '/components/RouterLink.js'
+
 const fileIcons = {
     'dir': 'folder',
     'image/png': 'image',
@@ -13,9 +15,9 @@ export default class FileElement extends HTMLElement {
 
     attributeChangedCallback(property, oldValue, newValue) {
         if (oldValue === newValue) return;
-        this[ property ] = JSON.parse(newValue);
+        this[property] = JSON.parse(newValue);
 
-        if(this.shadow) this.displayEntry(this.shadow)
+        if (this.shadow) this.displayEntry(this.shadow)
     }
 
     connectedCallback() {
@@ -26,10 +28,13 @@ export default class FileElement extends HTMLElement {
                 rel="stylesheet" 
                 href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,1,200" 
             />
-            <li>
-                <div class="material-symbols-outlined"></div>
-                <p></p>
-            </li>
+            <router-link>
+                <li>
+                    <div class="material-symbols-outlined"></div>
+                    <p></p>
+                </li>
+            </router-link>
+            
             <style>
                 li {
                     background: white;
@@ -39,7 +44,16 @@ export default class FileElement extends HTMLElement {
                     
                     align-items: center;
                     gap: 2px;
+                    
                     text-align: center;
+                    
+                    text-decoration: none;
+                    color: black;
+                }
+                
+                                
+                li:hover p, li:focus p {
+                    text-decoration: underline;
                 }
                 
                 div {
@@ -60,8 +74,11 @@ export default class FileElement extends HTMLElement {
     }
 
     displayEntry(shadow) {
+        const name = this.file?.Name ?? "";
+
         shadow.querySelector('div').innerText = fileIcons[this.file?.Type] ?? "unknown_document"
-        shadow.querySelector('p').innerText = this.file?.Name ?? ""
+        shadow.querySelector('p').innerText = name
+        shadow.querySelector('router-link').setAttribute('href', `${location.pathname}/${name}`)
     }
 }
 
