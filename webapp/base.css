@@ -11,7 +11,7 @@
 :root {
     --padding: 24px;
 
-    --card-shadow: rgba(0, 0, 0, 0.25) 1px 1px 6px 2px;
+    --card-shadow: rgba(0, 0, 0, 0.10) 1px 1px 6px 2px;
     --card-shape: 16px;
 
     --label-size: 0.8rem;

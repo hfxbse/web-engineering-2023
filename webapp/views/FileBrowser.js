@@ -1,6 +1,8 @@
 import {authorizationHeader, sessionData, validateSession} from "/Session.js";
 import '/components/SpinnerIndicator.js'
 import '/components/ErrorMessage.js'
+import '/components/FileList.js'
+import '/components/FileElement.js'
 
 export function userRoot() {
     return `/@${sessionData().user}`
@@ -38,8 +40,22 @@ export default class FileBrowser extends HTMLElement {
         const placeholder = shadow.querySelector('.placeholder')
 
         this.fetchDirectory()
-            .then(() => shadow.removeChild(placeholder))
+            .then((content) => this.displayContent(shadow, placeholder, content))
             .catch((e) => this.displayError(placeholder, e))
+    }
+
+    displayContent(shadow, placeholder, content) {
+        shadow.removeChild(placeholder)
+
+        const list = document.createElement(`file-list`)
+        content.forEach((entry) => {
+            const element = document.createElement('file-element')
+            element.setAttribute('file', JSON.stringify(entry))
+
+            list.appendChild(element)
+        })
+
+        shadow.appendChild(list)
     }
 
     displayError(placeholder, error) {
