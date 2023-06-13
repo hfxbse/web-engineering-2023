@@ -1,6 +1,6 @@
-import {saveSession} from "../Session.js";
-import "../components/ErrorMessage.js";
-import router from "../router/Router.js";
+import {saveSession} from "/Session.js";
+import "/components/ErrorMessage.js";
+import router from "/router/Router.js";
 
 export default class AuthenticationForm extends HTMLElement {
     constructor() {
@@ -21,8 +21,7 @@ export default class AuthenticationForm extends HTMLElement {
         const shadow = this.attachShadow({mode: 'closed'})
 
         shadow.innerHTML = `
-            <!--suppress HtmlUnknownTarget -->
-            <link rel="stylesheet" href="./base.css">
+            <link rel="stylesheet" href="/base.css">
             <form>
                 <label for="username-" class="text-field-label">Username</label>
                 <input type="text" id="username-">

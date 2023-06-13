@@ -1,4 +1,4 @@
-import router from "../router/Router.js";
+import router from "/router/Router.js";
 
 
 export default class ViewRouter extends HTMLElement {

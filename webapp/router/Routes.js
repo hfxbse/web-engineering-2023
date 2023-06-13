@@ -1,6 +1,6 @@
-import {sessionActive, sessionData} from "../Session.js";
-import "../views/AuthenticationForm.js"
-import "../views/NotFound.js"
+import {sessionActive, sessionData} from "/Session.js";
+import "/views/AuthenticationForm.js"
+import "/views/NotFound.js"
 
 export class RouteMatch {
     constructor(match, redirect) {

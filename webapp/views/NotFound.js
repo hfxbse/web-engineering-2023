@@ -3,8 +3,7 @@ class NotFound extends HTMLElement {
         const shadow = this.attachShadow({mode: 'closed'})
 
         shadow.innerHTML = `
-            <!--suppress HtmlUnknownTarget -->
-            <link rel="stylesheet" href="./base.css">
+            <link rel="stylesheet" href="/base.css">
             <h1>404 - Not found</h1>
             
             <style>

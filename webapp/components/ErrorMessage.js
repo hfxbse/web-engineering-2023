@@ -15,8 +15,7 @@ export default class ErrorMessage extends HTMLElement {
         const shadow = this.attachShadow({mode: 'closed'})
 
         shadow.innerHTML = `
-            <!--suppress HtmlUnknownTarget -->
-            <link rel="stylesheet" href="./base.css">
+            <link rel="stylesheet" href="/base.css">
             <p></p>
             
             <style>
