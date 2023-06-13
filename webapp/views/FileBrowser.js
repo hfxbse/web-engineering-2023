@@ -1,5 +1,6 @@
 import {authorizationHeader, sessionData, validateSession} from "/Session.js";
 import '/components/SpinnerIndicator.js'
+import '/components/ErrorMessage.js'
 
 export function userRoot() {
     return `/@${sessionData().user}`
@@ -10,7 +11,7 @@ export default class FileBrowser extends HTMLElement {
         const shadow = this.attachShadow({mode: 'closed'})
         shadow.innerHTML = `
             <link rel="stylesheet" href="/base.css">
-            <div class="loading">
+            <div class="placeholder">
                 <h2>Loading your files…</h2>
                 <spinning-indicator></spinning-indicator>            
             </div>
@@ -22,7 +23,7 @@ export default class FileBrowser extends HTMLElement {
                     width: 100vw;
                 }
             
-                .loading {
+                .placeholder {
                     height: 100%;
                     width: 100%;
                     
@@ -34,15 +35,20 @@ export default class FileBrowser extends HTMLElement {
             </style>
         `
 
-        const loadingPlaceholder = shadow.querySelector('.loading')
+        const placeholder = shadow.querySelector('.placeholder')
 
         this.fetchDirectory()
-            .then(() => {
-                shadow.removeChild(loadingPlaceholder)
-            })
-            .catch(() => {
-                shadow.removeChild(loadingPlaceholder)
-            })
+            .then(() => shadow.removeChild(placeholder))
+            .catch((e) => this.displayError(placeholder, e))
+    }
+
+    displayError(placeholder, error) {
+        Array.from(placeholder.children).forEach(child => placeholder.removeChild(child))
+
+        const errorElement = document.createElement('error-message')
+        errorElement.setAttribute('message', error.message ?? 'An unexpected error occurred.')
+
+        placeholder.appendChild(errorElement)
     }
 
     path() {
@@ -53,10 +59,15 @@ export default class FileBrowser extends HTMLElement {
     }
 
     async fetchDirectory() {
-        const response = await fetch(`http://localhost:8080/${this.path()}`, authorizationHeader())
-        if (!validateSession(response)) return;
+        try {
+            const response = await fetch(`http://localhost:8080/${this.path()}`, authorizationHeader())
+            if (!validateSession(response)) return;
 
-        console.log(response)
+            return await response.json();
+        } catch (e) {
+            throw {message: "Could not load directory due to a network error."}
+        }
+
     }
 }
 

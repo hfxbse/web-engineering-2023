@@ -6,8 +6,9 @@ export default class ErrorMessage extends HTMLElement {
     attributeChangedCallback(key, oldValue, newValue) {
         if (oldValue === newValue) return;
 
-        if(key === "message") {
-            this.text.innerText = newValue;
+        if (key === "message") {
+            if (this.text) this.text.innerText = newValue;
+            else this.message = newValue
         }
     }
 
