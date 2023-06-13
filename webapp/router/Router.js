@@ -1,8 +1,7 @@
 import routes from "./Routes.js";
 
 class Router {
-    constructor(activeSession, pushCallback) {
-        this.activeSession = activeSession
+    constructor(pushCallback) {
         this.pushCallback = pushCallback
     }
 
@@ -29,10 +28,16 @@ class Router {
     }
 
     createTag(route) {
-        let attributes = route.attributes ? route.attributes() : {}
-        attributes = Object.keys(attributes).map(key => `${key}="${attributes[key]}"`).join(" ")
+        const element = document.createElement(route.tag)
 
-        return `<${route.tag} ${attributes}></${route.tag}>`
+        if (route.attributes) {
+            const attributes = route.attributes()
+            Object.keys(attributes).forEach((property) =>
+                element.setAttribute(property, attributes[property])
+            )
+        }
+
+        return element;
     }
 
     push(url) {
@@ -41,5 +46,5 @@ class Router {
     }
 }
 
-const router = new Router(false);
+const router = new Router();
 export default router

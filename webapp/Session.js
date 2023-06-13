@@ -1,10 +1,6 @@
-import router from "./router/Router.js";
-
 export function saveSession(user, token) {
     sessionStorage.setItem('token', token);
     sessionStorage.setItem('user', user);
-
-    router.activeSession = true
 }
 
 export function sessionData() {
@@ -24,18 +20,7 @@ export function authorizationHeader() {
     }
 }
 
-export async function sessionActive() {
-    router.activeSession = await (async () => {
-        const session = sessionData();
-
-        if (!session.token || !session.user) return false;
-
-        try {
-            const response = await fetch('http://localhost:8080', authorizationHeader())
-            return response.ok;
-        } catch (e) {
-            console.error(e)
-            return false
-        }
-    })();
+export function sessionActive() {
+    const session = sessionData();
+    return session.token && session.user;
 }

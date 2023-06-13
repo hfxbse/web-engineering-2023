@@ -1,5 +1,4 @@
-import router from "./Router.js";
-import {sessionData} from "../Session.js";
+import {sessionActive, sessionData} from "../Session.js";
 import "../views/AuthenticationForm.js"
 import "../views/NotFound.js"
 
@@ -45,13 +44,13 @@ const routes = {
             redirect: !isAuthPath() ? location.pathname : '/'
         }),
 
-        match: () => new RouteMatch(!router.activeSession, authPath),
+        match: () => new RouteMatch(!sessionActive(), authPath),
         priority: 1
     }),
     files: new Route({
         tag: 'div',
         match: () => new RouteMatch(
-            directoryRoot() || location.pathname === authPath && router.activeSession,
+            directoryRoot() || location.pathname === authPath && sessionActive(),
             isAuthPath() || location.pathname === '/' ? userRoot() : undefined
         ),
     })
