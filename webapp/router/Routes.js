@@ -1,4 +1,5 @@
-import {sessionActive, sessionData} from "/Session.js";
+import {sessionActive} from "/Session.js";
+import {userRoot} from "/views/FileBrowser.js";
 import "/views/AuthenticationForm.js"
 import "/views/NotFound.js"
 
@@ -20,10 +21,6 @@ export class Route {
 
 const authPath = '/auth'
 
-function userRoot() {
-    return `/@${sessionData().user}`
-}
-
 function isAuthPath() {
     return new RegExp(`^\\${authPath}\/?$`).test(location.pathname)
 }
@@ -40,15 +37,17 @@ const routes = {
     }),
     auth: new Route({
         tag: 'authentication-form',
-        attributes: () => ({
-            redirect: !isAuthPath() ? location.pathname : '/'
-        }),
+        match: () => {
+            const redirect = !isAuthPath() ?
+                `${authPath}?redirect=${encodeURI(location.pathname + location.search)}` :
+                undefined;
 
-        match: () => new RouteMatch(!sessionActive(), authPath),
+            return new RouteMatch(!sessionActive(), redirect);
+        },
         priority: 1
     }),
     files: new Route({
-        tag: 'div',
+        tag: 'file-browser',
         match: () => new RouteMatch(
             directoryRoot() || isAuthPath() && sessionActive(),
             isAuthPath() || location.pathname === '/' ? userRoot() : undefined

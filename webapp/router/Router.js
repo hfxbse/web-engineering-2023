@@ -22,7 +22,7 @@ class Router {
         const route = routes[routeName];
         const tag = this.createTag(route);
 
-        if (match.redirect) history.replaceState(undefined, undefined, match.redirect)
+        if (match.redirect) history.pushState(undefined, undefined, match.redirect)
 
         return tag;
     }

@@ -5,16 +5,9 @@ import router from "/router/Router.js";
 export default class AuthenticationForm extends HTMLElement {
     constructor() {
         super();
-        this.redirect = '/'
-    }
 
-    static get observedAttributes() {
-        return ['redirect'];
-    }
-
-    attributeChangedCallback(key, oldValue, newValue) {
-        if (oldValue === newValue) return;
-        this[key] = newValue;
+        const parameters = new URLSearchParams(location.search)
+        this.redirect = parameters.has('redirect') ? parameters.get('redirect') : '/'
     }
 
     connectedCallback() {
