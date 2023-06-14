@@ -4,6 +4,7 @@ import '/components/ErrorMessage.js'
 import '/components/FileList.js'
 import '/components/FileElement.js'
 import '/components/MediaView.js'
+import '/components/TextEditor.js'
 
 export function userRoot() {
     return `/@${sessionData().user}`
@@ -48,25 +49,28 @@ export default class FileBrowser extends HTMLElement {
     displayContent(shadow, placeholder, content) {
         shadow.removeChild(placeholder)
 
+        let element;
+
         if (content.type === 'directory') {
             content = content.content
 
-            const list = document.createElement(`file-list`)
+            element = document.createElement(`file-list`)
             content.forEach((entry) => {
-                const element = document.createElement('file-element')
-                element.setAttribute('file', JSON.stringify(entry))
+                const item = document.createElement('file-element')
+                item.setAttribute('file', JSON.stringify(entry))
 
-                list.appendChild(element)
+                element.appendChild(item)
             })
-
-            shadow.appendChild(list)
         } else if (/^(image|audio|video)\//.test(content.type)) {
-            const mediaView = document.createElement('media-view')
-            mediaView.setAttribute('type', content.type)
-            mediaView.setAttribute('href', content.content)
-
-            shadow.appendChild(mediaView)
+            element = document.createElement('media-view')
+            element.setAttribute('type', content.type)
+            element.setAttribute('src', content.content)
+        } else if (/^text\//.test(content.type)) {
+            element = document.createElement('text-editor')
+            element.setAttribute('src', content.content)
         }
+
+        shadow.appendChild(element)
     }
 
     displayError(placeholder, error) {

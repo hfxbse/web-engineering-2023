@@ -1,6 +1,6 @@
 export default class MediaView extends HTMLElement {
     static get observedAttributes() {
-        return ['type', 'href']
+        return ['type', 'src']
     }
 
     attributeChangedCallback(property, oldValue, newValue) {
@@ -40,7 +40,7 @@ export default class MediaView extends HTMLElement {
         this.container.removeChild(this.container.lastChild)
 
         const element = this.mediaElement();
-        element.setAttribute('src', this.href ?? '')
+        element.setAttribute('src', this.src ?? '')
         element.setAttribute('controls', 'controls')
 
         this.container.appendChild(element)
