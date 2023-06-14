@@ -42,7 +42,9 @@ export default class FileBrowser extends HTMLElement {
         const placeholder = shadow.querySelector('.placeholder')
 
         this.fetchContent()
-            .then((content) => this.displayContent(shadow, placeholder, content))
+            .then((content) => {
+                if (content) this.displayContent(shadow, placeholder, content)
+            })
             .catch((e) => this.displayError(placeholder, e))
     }
 
@@ -90,12 +92,19 @@ export default class FileBrowser extends HTMLElement {
     }
 
     async fetchContent() {
-        try {
-            const response = await fetch(`http://localhost:8080/${this.path()}`, authorizationHeader())
-            if (!validateSession(response)) return;
+        const response = await this.catchNetworkError(async () => {
+            return await fetch(`http://localhost:8080/${this.path()}`, authorizationHeader());
+        })
 
-            const contentType = response.headers.get('Content-Type')
+        if (!validateSession(response)) return;
 
+        if (response.status === 500 && (await response.json()).error === 'file does not exist') {
+            throw {message: 'File does not exits.'}
+        }
+
+        const contentType = response.headers.get('Content-Type')
+
+        return await this.catchNetworkError(async () => {
             if (contentType.startsWith('text/html'))
                 return {type: 'directory', content: await response.json()}
             else
@@ -103,10 +112,15 @@ export default class FileBrowser extends HTMLElement {
                     type: contentType.startsWith('text/plain') ? 'text/plain' : contentType,
                     content: URL.createObjectURL(await response.blob())
                 }
-        } catch (e) {
-            throw {message: "Could not load directory due to a network error."}
-        }
+        })
+    }
 
+    async catchNetworkError(runner) {
+        try {
+            return await runner();
+        } catch (e) {
+            throw {message: "Could not load directory due to a network error.", reason: e}
+        }
     }
 }
 
