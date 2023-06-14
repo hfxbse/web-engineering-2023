@@ -5,6 +5,7 @@ import '/components/FileList.js'
 import '/components/FileElement.js'
 import '/components/MediaView.js'
 import '/components/TextEditor.js'
+import '/components/PathView.js'
 
 export function userRoot() {
     return `/@${sessionData().user}`
@@ -19,10 +20,12 @@ export default class FileBrowser extends HTMLElement {
                 <h2>Loading your files…</h2>
                 <spinning-indicator></spinning-indicator>            
             </div>
-            
+            <path-view></path-view>
             <style>
                 :host {
-                    display: block;
+                    display: flex;
+                    flex-direction: column;
+                    
                     height: 100vh;
                     width: 100vw;
                 }
@@ -35,6 +38,20 @@ export default class FileBrowser extends HTMLElement {
                     align-items: center;
                     justify-content: center;
                     gap: var(--padding);
+                }
+                
+                :host > :not(path-view) {
+                    flex-grow: 1;
+                    flex-shrink: 1;
+                }
+                
+                path-view {
+                    bottom: 0;
+                    position: sticky;
+                    
+                    background: white;
+                    border-top: 1px solid black;
+                    padding: var(--padding);
                 }
             </style>
         `
@@ -49,8 +66,6 @@ export default class FileBrowser extends HTMLElement {
     }
 
     displayContent(shadow, placeholder, content) {
-        shadow.removeChild(placeholder)
-
         let element;
 
         if (content.type === 'directory') {
@@ -72,7 +87,8 @@ export default class FileBrowser extends HTMLElement {
             element.setAttribute('src', content.content)
         }
 
-        shadow.appendChild(element)
+        if (element) shadow.insertBefore(element, placeholder)
+        shadow.removeChild(placeholder)
     }
 
     displayError(placeholder, error) {
