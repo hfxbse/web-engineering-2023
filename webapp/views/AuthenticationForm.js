@@ -3,13 +3,6 @@ import "/components/ErrorMessage.js";
 import router from "/router/Router.js";
 
 export default class AuthenticationForm extends HTMLElement {
-    constructor() {
-        super();
-
-        const parameters = new URLSearchParams(location.search)
-        this.redirect = parameters.has('redirect') ? parameters.get('redirect') : '/'
-    }
-
     connectedCallback() {
         const shadow = this.attachShadow({mode: 'closed'})
 
@@ -102,7 +95,7 @@ export default class AuthenticationForm extends HTMLElement {
 
             try {
                 await this.login(usernameInput.value, passwordInput.value)
-                router.push(this.redirect)
+                router.push(this.redirect())
             } catch (e) {
                 await new Promise(resolve => setTimeout(resolve, 250))
 
@@ -111,6 +104,11 @@ export default class AuthenticationForm extends HTMLElement {
                 errorBanner.setAttribute("message", e.message)
             }
         }
+    }
+
+    redirect() {
+        const parameters = new URLSearchParams(location.search)
+        return parameters.has('redirect') ? parameters.get('redirect') : '/'
     }
 
     async networkExceptionHandler(runner) {
