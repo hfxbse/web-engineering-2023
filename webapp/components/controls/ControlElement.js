@@ -14,8 +14,6 @@ export default class ControlElement extends HTMLElement {
         if (oldValue === newValue) return;
         this[property] = newValue === "working" || newValue === "true";
 
-        console.dir(this.working)
-
         if (this.content) this.displayContent()
     }
 

@@ -8,6 +8,7 @@ import '/components/TextEditor.js'
 import '/components/PathView.js'
 import '/components/controls/LogoutButton.js'
 import '/components/controls/DownloadButton.js'
+import '/components/controls/UploadButton.js'
 
 export function userRoot() {
     return `/@${sessionData().user}`
@@ -70,29 +71,50 @@ export default class FileBrowser extends HTMLElement {
             .catch((e) => this.displayError(placeholder, e))
     }
 
+    addControl(pathView, control) {
+        pathView.insertBefore(control, pathView.firstElementChild)
+    }
+
+    displayDirectory(list, content) {
+        Array.from(list.children).forEach(child => list.removeChild(child))
+
+        content.content.forEach((entry) => {
+            const item = document.createElement('file-element')
+            item.setAttribute('file', JSON.stringify(entry))
+
+            list.appendChild(item)
+        })
+    }
+
     displayContent(shadow, placeholder, content, pathView) {
         let element;
 
         if (content.type === 'directory') {
-            content = content.content
-
             element = document.createElement(`file-list`)
-            content.forEach((entry) => {
-                const item = document.createElement('file-element')
-                item.setAttribute('file', JSON.stringify(entry))
 
-                element.appendChild(item)
+            this.displayDirectory(element, content)
+
+            const uploadButton = document.createElement('upload-button')
+            uploadButton.addEventListener('uploaded', () => {
+                this.fetchContent()
+                    .then((content) => this.displayDirectory(element, content))
+                    .catch(console.dir)     // TODO
             })
+
+            this.addControl(pathView, uploadButton)
         } else {
             const downloadButton = document.createElement('download-button');
             downloadButton.setAttribute('href', content.content)
-            pathView.insertBefore(downloadButton, pathView.firstElementChild)
+            this.addControl(pathView, downloadButton)
 
             if (/^(image|audio|video)\//.test(content.type)) {
                 element = document.createElement('media-view')
                 element.setAttribute('type', content.type)
             } else if (/^text\//.test(content.type)) {
                 element = document.createElement('text-editor')
+            } else {
+                this.displayError(placeholder, {message: 'Preview not available.'})
+                return
             }
 
             element.setAttribute('src', content.content)
