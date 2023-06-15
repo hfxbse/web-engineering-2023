@@ -6,7 +6,8 @@ import '/components/FileElement.js'
 import '/components/MediaView.js'
 import '/components/TextEditor.js'
 import '/components/PathView.js'
-import '/components/LogoutButton.js'
+import '/components/controls/LogoutButton.js'
+import '/components/controls/DownloadButton.js'
 
 export function userRoot() {
     return `/@${sessionData().user}`
@@ -60,15 +61,16 @@ export default class FileBrowser extends HTMLElement {
         `
 
         const placeholder = shadow.querySelector('.placeholder')
+        const pathView = shadow.querySelector('path-view')
 
         this.fetchContent()
             .then((content) => {
-                if (content) this.displayContent(shadow, placeholder, content)
+                if (content) this.displayContent(shadow, placeholder, content, pathView)
             })
             .catch((e) => this.displayError(placeholder, e))
     }
 
-    displayContent(shadow, placeholder, content) {
+    displayContent(shadow, placeholder, content, pathView) {
         let element;
 
         if (content.type === 'directory') {
@@ -81,12 +83,18 @@ export default class FileBrowser extends HTMLElement {
 
                 element.appendChild(item)
             })
-        } else if (/^(image|audio|video)\//.test(content.type)) {
-            element = document.createElement('media-view')
-            element.setAttribute('type', content.type)
-            element.setAttribute('src', content.content)
-        } else if (/^text\//.test(content.type)) {
-            element = document.createElement('text-editor')
+        } else {
+            const downloadButton = document.createElement('download-button');
+            downloadButton.setAttribute('href', content.content)
+            pathView.insertBefore(downloadButton, pathView.firstElementChild)
+
+            if (/^(image|audio|video)\//.test(content.type)) {
+                element = document.createElement('media-view')
+                element.setAttribute('type', content.type)
+            } else if (/^text\//.test(content.type)) {
+                element = document.createElement('text-editor')
+            }
+
             element.setAttribute('src', content.content)
         }
 

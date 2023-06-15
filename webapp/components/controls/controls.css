@@ -1,0 +1,9 @@
+.icon {
+    color: black;
+    padding: 0;
+    font-weight: bold;
+}
+
+.control:hover .icon, .control:focus .icon {
+    color: var(--highlight-color);
+}

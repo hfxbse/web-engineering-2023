@@ -1,18 +1,20 @@
 import '/components/RouterLink.js'
-import '/components/ControlElement.js'
+import '/components/controls/ControlElement.js'
 
 export default class PathView extends HTMLElement {
     connectedCallback() {
         const shadow = this.attachShadow({mode: 'closed'})
         shadow.innerHTML = `
             <link rel="stylesheet" href="/base.css">
+            <link rel="stylesheet" href="/components/controls/controls.css">
             <link 
                     rel="stylesheet" 
                     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,700,0,0" 
             />
             <div>
-                <router-link>
+                <router-link class="control">
                     <control-element>
+                        <link rel="stylesheet" href="/components/controls/controls.css">
                         <div class="material-symbols-outlined icon">arrow_upward</div>
                     </control-element>
                 </router-link>
@@ -33,15 +35,6 @@ export default class PathView extends HTMLElement {
                     align-items: center;
                     
                     gap: calc(var(--padding) / 2);
-                }
-
-                .icon {
-                    color: black;
-                    font-weight: bold;
-                }
-                
-                router-link:hover .icon, router-link:focus .icon {
-                    color: var(--highlight-color);
                 }
             </style>
         `
