@@ -6,6 +6,7 @@ import '/components/FileElement.js'
 import '/components/MediaView.js'
 import '/components/TextEditor.js'
 import '/components/PathView.js'
+import '/components/LogoutButton.js'
 
 export function userRoot() {
     return `/@${sessionData().user}`
@@ -20,7 +21,9 @@ export default class FileBrowser extends HTMLElement {
                 <h2>Loading your files…</h2>
                 <spinning-indicator></spinning-indicator>            
             </div>
-            <path-view></path-view>
+            <path-view>
+                <logout-button></logout-button>
+            </path-view>
             <style>
                 :host {
                     display: flex;
