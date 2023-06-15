@@ -51,6 +51,7 @@ input:focus {
 }
 
 button {
+    background: white;
     border: none;
 
     border-radius: var(--padding);

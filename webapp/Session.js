@@ -27,13 +27,30 @@ export function sessionActive() {
     return session.token && session.user;
 }
 
-export function validateSession(response,) {
+export function clearSession() {
+    sessionStorage.clear()
+    router.push(`/auth?redirect=${encodeURI(location.pathname + location.search)}`)
+}
+
+export function validateSession(response) {
     if (response.status === 401) {
-        sessionStorage.clear()
-        router.push(`/auth?redirect=${encodeURI(location.pathname + location.search)}`)
+        clearSession()
 
         return false
     }
 
     return true
+}
+
+export async function invalidateSession() {
+    while (true) {
+        try {
+            const response = await fetch('http://localhost:8080/logout', authorizationHeader())
+            if (!validateSession(response)) return
+
+            clearSession()
+            return
+        } catch (e) {
+        }
+    }
 }

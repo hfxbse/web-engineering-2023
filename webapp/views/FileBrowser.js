@@ -51,7 +51,7 @@ export default class FileBrowser extends HTMLElement {
                     
                     background: white;
                     border-top: 1px solid black;
-                    padding: var(--padding);
+                    padding: calc(var(--padding) / 2) var(--padding);
                 }
             </style>
         `
