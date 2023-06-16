@@ -23,6 +23,8 @@ export default class TextEditor extends HTMLElement {
                 }
                 
                 textarea {
+                    outline: none;
+                
                     border: none;
                     resize: none;
                     display: block;
