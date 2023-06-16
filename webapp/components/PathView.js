@@ -49,7 +49,7 @@ export default class PathView extends HTMLElement {
         const parent = shadow.querySelector('router-link')
         const icon = shadow.querySelector('.icon')
 
-        path.innerText = location.pathname.slice(1).replace(/\/+/g, '/')
+        path.innerText = decodeURIComponent(location.pathname.slice(1).replace(/\/+/g, '/'))
         parent.setAttribute('href', parentDirectoryURL() ?? '')
 
         if (!/\//.test(parentDirectoryURL())) {
