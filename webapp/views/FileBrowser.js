@@ -9,6 +9,7 @@ import '/components/PathView.js'
 import '/components/controls/LogoutButton.js'
 import '/components/controls/DownloadButton.js'
 import '/components/controls/UploadButton.js'
+import '/components/controls/DeleteButton.js'
 
 export function userRoot() {
     return `/@${sessionData().user}`
@@ -126,6 +127,10 @@ export default class FileBrowser extends HTMLElement {
             element.setAttribute('src', content.content)
         }
 
+        if (this.path().length > 0) {
+            this.addControl(pathView, document.createElement('delete-button'))
+        }
+
         if (element) shadow.insertBefore(element, placeholder)
         shadow.removeChild(placeholder)
     }
@@ -141,7 +146,7 @@ export default class FileBrowser extends HTMLElement {
     }
 
     path() {
-        let path = location.pathname.slice(userRoot().length)
+        let path = location.pathname.slice(userRoot().length).replace(/\/+/g, '/')
         if (path.startsWith('/')) path = path.slice(1)
 
         return path

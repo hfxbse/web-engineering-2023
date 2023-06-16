@@ -1,5 +1,6 @@
 import '/components/RouterLink.js'
 import '/components/controls/ControlElement.js'
+import {parentDirectoryURL} from "/Path.js";
 
 export default class PathView extends HTMLElement {
     connectedCallback() {
@@ -49,20 +50,11 @@ export default class PathView extends HTMLElement {
         const icon = shadow.querySelector('.icon')
 
         path.innerText = location.pathname.slice(1).replace(/\/+/g, '/')
-        parent.setAttribute('href', this.parentDirectory() ?? '')
+        parent.setAttribute('href', parentDirectoryURL() ?? '')
 
-        if (!/\//.test(this.parentDirectory())) {
+        if (!/\//.test(parentDirectoryURL())) {
             icon.innerText = "home"
             parent.setAttribute('disabled', 'disabled')
-        }
-    }
-
-    parentDirectory() {
-        if (/\/.+/.test(location.pathname.slice(1))) {
-            let parent = location.pathname.replace(/\/+/g, '/')
-            if (parent.endsWith("/")) parent = parent.slice(0, parent.length - 1)
-
-            return parent.slice(0, parent.lastIndexOf("/"))
         }
     }
 }

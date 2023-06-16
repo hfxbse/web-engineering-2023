@@ -1,4 +1,5 @@
 import {authorizationHeader} from "/Session.js";
+import {currentEntryPath} from "/Path.js";
 import '/components/controls/ControlElement.js'
 import '/components/error/ErrorDialog.js'
 
@@ -52,7 +53,7 @@ export default class UploadButton extends HTMLElement {
     }
 
     async uploadFile(file) {
-        const path = location.pathname.slice(1).split(/\/+/).slice(1).join('/');
+        const path = currentEntryPath()
         const form = new FormData()
 
         form.append('newFile', file)
