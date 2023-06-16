@@ -1,4 +1,4 @@
-import {authorizationHeader} from "/Session.js";
+import {authorizationHeader, validateSession} from "/Session.js";
 import {currentEntryPath} from "/Path.js";
 import '/components/controls/ControlElement.js'
 import '/components/error/ErrorDialog.js'
@@ -58,11 +58,13 @@ export default class UploadButton extends HTMLElement {
 
         form.append('newFile', file)
 
-        await fetch(`http://localhost:8080/${path}/${file.name}`, {
+        const response = await fetch(`http://localhost:8080/${path}/${file.name}`, {
             method: 'POST',
             body: form,
             ...authorizationHeader()
         })
+
+        if (!validateSession(response)) return
 
         this.dispatchEvent(new CustomEvent('uploaded'))
     }

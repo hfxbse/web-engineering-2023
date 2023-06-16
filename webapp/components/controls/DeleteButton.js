@@ -1,4 +1,4 @@
-import {authorizationHeader} from "/Session.js";
+import {authorizationHeader, validateSession} from "/Session.js";
 import {currentEntryPath, parentDirectoryURL} from "/Path.js";
 import '/components/controls/ControlElement.js'
 import '/components/error/ErrorDialog.js'
@@ -64,6 +64,8 @@ export default class DeleteButton extends HTMLElement {
         } catch (e) {
             throw {message: `Could not delete ${fileName}.`}
         }
+
+        if (!validateSession(response)) return
 
         if (!response.ok) {
             throw {message: `Failed to delete ${fileName}.`}
