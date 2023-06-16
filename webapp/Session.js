@@ -51,6 +51,7 @@ export async function invalidateSession() {
             clearSession()
             return
         } catch (e) {
+            await new Promise(resolve => setTimeout(resolve, 100))
         }
     }
 }

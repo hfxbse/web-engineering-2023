@@ -1,6 +1,6 @@
 import {authorizationHeader, sessionData, validateSession} from "/Session.js";
 import '/components/SpinnerIndicator.js'
-import '/components/ErrorMessage.js'
+import '/components/error/ErrorMessage.js'
 import '/components/FileList.js'
 import '/components/FileElement.js'
 import '/components/MediaView.js'
@@ -102,6 +102,7 @@ export default class FileBrowser extends HTMLElement {
                         this.displayDirectory(element, content)
                         return
                     } catch (e) {
+                        await new Promise(resolve => setTimeout(resolve, 100))
                     }
                 }
             })
@@ -133,7 +134,8 @@ export default class FileBrowser extends HTMLElement {
         Array.from(placeholder.children).forEach(child => placeholder.removeChild(child))
 
         const errorElement = document.createElement('error-message')
-        errorElement.setAttribute('message', error.message ?? 'An unexpected error occurred.')
+        errorElement.setAttribute('centered', 'centered')
+        errorElement.innerText = error.message ?? 'An unexpected error occurred.'
 
         placeholder.appendChild(errorElement)
     }

@@ -1,5 +1,5 @@
 import {saveSession} from "/Session.js";
-import "/components/ErrorMessage.js";
+import "/components/error/ErrorMessage.js";
 import router from "/router/Router.js";
 
 export default class AuthenticationForm extends HTMLElement {
@@ -64,6 +64,10 @@ export default class AuthenticationForm extends HTMLElement {
                     margin-left: calc(var(--padding) / 4);
                 }
                 
+                error-message:empty {
+                    visibility: hidden;
+                }
+                
                 @container (max-width: 40ch) {
                     div {
                         flex-direction: column-reverse;
@@ -76,6 +80,7 @@ export default class AuthenticationForm extends HTMLElement {
                     
                     error-message {
                         text-align: center;
+                        margin: 0;
                     }
                 }
             </style>
@@ -90,8 +95,7 @@ export default class AuthenticationForm extends HTMLElement {
             event.preventDefault()
 
             loginButton.disabled = true
-            loginButton.innerText = "Logging in…"
-            errorBanner.setAttribute("message", "")
+            loginButton.innerText = 'Logging in…'
 
             try {
                 await this.login(usernameInput.value, passwordInput.value)
@@ -99,9 +103,9 @@ export default class AuthenticationForm extends HTMLElement {
             } catch (e) {
                 await new Promise(resolve => setTimeout(resolve, 250))
 
-                loginButton.innerText = "Login"
+                loginButton.innerText = 'Login'
                 loginButton.disabled = false
-                errorBanner.setAttribute("message", e.message)
+                errorBanner.innerText = e.message
             }
         }
     }
