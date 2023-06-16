@@ -11,13 +11,21 @@ export default class LogoutButton extends HTMLElement {
                     rel="stylesheet" 
                     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,700,0,0" 
             />
-            <control-element class="control">
-                <link rel="stylesheet" href="/components/controls/controls.css">
-                <button class="material-symbols-outlined icon">logout</button>
-            </control-element>
+            <button>
+                <control-element class="control">
+                    <link rel="stylesheet" href="/components/controls/controls.css">
+                    <span class="material-symbols-outlined icon">logout</span>
+                </control-element>
+            </button>
+            
+            <style>
+                button {
+                    padding: 0;
+                }
+            </style>
         `
 
-        const controlElement = shadow.querySelector('control-element')
+        const controlElement = shadow.querySelector('button')
 
         controlElement.addEventListener('click', async () => {
             controlElement.setAttribute('working', 'working')
