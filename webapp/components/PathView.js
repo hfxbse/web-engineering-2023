@@ -36,6 +36,10 @@ export default class PathView extends HTMLElement {
                     
                     gap: calc(var(--padding) / 2);
                 }
+                
+                p {
+                    word-wrap: anywhere;
+                }
             </style>
         `
 
