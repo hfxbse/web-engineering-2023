@@ -95,10 +95,15 @@ export default class FileBrowser extends HTMLElement {
             this.displayDirectory(element, content)
 
             const uploadButton = document.createElement('upload-button')
-            uploadButton.addEventListener('uploaded', () => {
-                this.fetchContent()
-                    .then((content) => this.displayDirectory(element, content))
-                    .catch(console.dir)     // TODO
+            uploadButton.addEventListener('uploaded', async () => {
+                while (true) {
+                    try {
+                        const content = await this.fetchContent()
+                        this.displayDirectory(element, content)
+                        return
+                    } catch (e) {
+                    }
+                }
             })
 
             this.addControl(pathView, uploadButton)

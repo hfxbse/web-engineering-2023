@@ -22,7 +22,7 @@ export default class ErrorMessage extends HTMLElement {
             <style>
                 p {
                     color: var(--error-color);
-                    height: 1rem;
+                    min-height: 1rem;
                 }
             </style>
         `

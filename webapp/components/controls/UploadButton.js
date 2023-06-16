@@ -1,5 +1,6 @@
 import {authorizationHeader} from "/Session.js";
 import '/components/controls/ControlElement.js'
+import '/components/ErrorMessage.js'
 
 export default class UploadButton extends HTMLElement {
     connectedCallback() {
@@ -18,16 +19,59 @@ export default class UploadButton extends HTMLElement {
                 </control-element>
             </label>
             <input type="file" id="upload">
+            <dialog>
+                <error-message></error-message>
+                <button>Ok</button>
+            </dialog>
             
             <style>
                 input {
                     display: none;
+                }
+                
+                dialog {
+                    border: none;
+                    padding: calc(var(--padding) / 2) var(--padding);
+                    border-radius: var(--padding);
+                    
+                    gap: var(--padding);
+                    
+                    width: 80%;
+                    max-width: 50ch;
+                    
+                    align-items: center;
+                }
+                
+                dialog[open] {
+                    display: flex;
+                }
+                
+                ::backdrop {
+                    backdrop-filter: blur(5px);
+                }
+                
+                button {
+                    border: 1px solid black;
+                    outline: none;
+                }
+                
+                button:hover, button:focus {
+                    color: var(--highlight-color);
+                    border-color: var(--highlight-color);
+                }
+                
+                error-message {
+                    flex: 1;
+                    height: fit-content;
                 }
             </style>
         `
 
         const controlElement = shadow.querySelector('control-element')
         const input = shadow.querySelector('input')
+        const dialog = shadow.querySelector('dialog')
+        const errorMessage = shadow.querySelector('error-message')
+        const dialogButton = shadow.querySelector('button')
 
         input.addEventListener('change', async () => {
             const file = input.files[0]
@@ -39,11 +83,16 @@ export default class UploadButton extends HTMLElement {
             try {
                 await this.uploadFile(file)
             } catch (e) {
-
+                errorMessage.setAttribute('message', `Failed to upload ${file.name}.`)
+                dialog.showModal()
             }
 
             input.removeAttribute('disabled')
             controlElement.removeAttribute('working')
+        })
+
+        dialogButton.addEventListener('click', () => {
+            dialog.close()
         })
     }
 
