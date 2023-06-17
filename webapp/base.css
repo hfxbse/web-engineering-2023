@@ -54,7 +54,12 @@ input:focus {
     font-size: var(--label-size);
 }
 
-button {
+.text-field-label + input {
+    margin-top: calc(var(--padding) / 4);
+    width: calc(100% - var(--padding));
+}
+
+button, input[type="radio"] + label {
     background: white;
     border: none;
 

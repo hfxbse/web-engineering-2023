@@ -46,7 +46,6 @@ export default class AuthenticationForm extends HTMLElement {
                 }
                 
                 input {
-                    margin-top: calc(var(--padding) / 4);
                     margin-bottom: calc(var(--padding) / 2);
                 }
                 

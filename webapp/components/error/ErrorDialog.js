@@ -1,37 +1,25 @@
 import '/components/error/ErrorMessage.js'
+import '/components/BaseDialog.js'
 
 export default class ErrorDialog extends HTMLElement {
     connectedCallback() {
         const shadow = this.attachShadow({mode: 'closed'})
         shadow.innerHTML = `
-            <link rel="stylesheet" href="/base.css">
-            <dialog>
-                <error-message>
-                    <slot></slot>
-                </error-message>
-                <button>Ok</button>
-            </dialog>
+            <base-dialog>
+                <link rel="stylesheet" href="/base.css">
+                <div>
+                    <error-message>
+                        <slot></slot>
+                    </error-message>
+                    <button>Ok</button>
+                </div>
+            </base-dialog>
             
             <style>
-                dialog {
-                    border: none;
-                    padding: calc(var(--padding) / 2) var(--padding);
-                    border-radius: var(--padding);
-                    
-                    gap: var(--padding);
-                    
-                    width: 80%;
-                    max-width: 50ch;
-                    
-                    align-items: center;
-                }
-                
-                dialog[open] {
+               div {
                     display: flex;
-                }
-                
-                ::backdrop {
-                    backdrop-filter: blur(5px);
+                    align-items: center;
+                    gap: var(--padding);
                 }
                 
                 button {
@@ -51,7 +39,7 @@ export default class ErrorDialog extends HTMLElement {
             </style>
         `
 
-        this.dialog = shadow.querySelector('dialog')
+        this.dialog = shadow.querySelector('base-dialog')
         const dialogButton = shadow.querySelector('button')
 
         dialogButton.addEventListener('click', () => {

@@ -13,6 +13,7 @@ import '/components/controls/UploadButton.js'
 import '/components/controls/DeleteButton.js'
 import '/components/controls/SaveButton.js'
 import '/components/controls/UndoButton.js'
+import '/components/controls/CreateButton.js'
 
 export function userRoot() {
     return `/@${sessionData().user}`
@@ -147,12 +148,21 @@ export default class FileBrowser extends HTMLElement {
     }
 
     displayContent(shadow, placeholder, content, pathView) {
-        let element = content.type === 'directory' ?
+        const directory = content.type === 'directory';
+
+        let element = directory ?
             this.folderView(pathView, content) :
             this.fileView(pathView, placeholder, content)
 
         if (currentEntryPath().length > 0) {
             this.addControl(pathView, document.createElement('delete-button'))
+        }
+
+        if (directory) {
+            const createButton =  document.createElement('create-button')
+            createButton.addEventListener('created', () => this.updateContent(element))
+
+            this.addControl(pathView, createButton)
         }
 
         if (!element) return
