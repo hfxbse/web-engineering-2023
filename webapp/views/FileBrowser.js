@@ -117,13 +117,13 @@ export default class FileBrowser extends HTMLElement {
             this.folderView(pathView, content) :
             this.fileView(pathView, placeholder, content)
 
-        if (!element) return
-
         if (currentEntryPath().length > 0) {
             this.addControl(pathView, document.createElement('delete-button'))
         }
 
-        if (element) shadow.insertBefore(element, placeholder)
+        if (!element) return
+
+        shadow.insertBefore(element, placeholder)
         shadow.removeChild(placeholder)
     }
 
