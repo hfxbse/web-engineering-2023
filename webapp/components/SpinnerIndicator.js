@@ -5,6 +5,12 @@ export default class SpinnerIndicator extends HTMLElement {
             <link rel="stylesheet" href="/base.css">
             <div></div>
             <style>
+                :host {
+                    display: block;
+                    height: fit-content;
+                    width: fit-content;
+                }
+            
                 div {
                     width: 1rem;
                     height: 1rem;

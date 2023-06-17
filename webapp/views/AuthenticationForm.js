@@ -1,6 +1,7 @@
 import {saveSession} from "/Session.js";
-import "/components/error/ErrorMessage.js";
 import router from "/router/Router.js";
+import "/components/error/ErrorMessage.js";
+import "/components/SpinnerIndicator.js"
 
 export default class AuthenticationForm extends HTMLElement {
     connectedCallback() {
@@ -9,15 +10,17 @@ export default class AuthenticationForm extends HTMLElement {
         shadow.innerHTML = `
             <link rel="stylesheet" href="/base.css">
             <form>
-                <label for="username-" class="text-field-label">Username</label>
-                <input type="text" id="username-">
+                <label for="username" class="text-field-label">Username</label>
+                <input type="text" id="username">
                 
                 <label for="password" class="text-field-label">Password</label>
                 <input type="password" id="password">
                 
                 <div>
                     <error-message></error-message>
-                    <button id="submit">Login</button>
+                    <div class="login">
+                        <button id="submit">Login</button>
+                    </div>
                 </div>
             </form>
             
@@ -52,11 +55,12 @@ export default class AuthenticationForm extends HTMLElement {
                     background: var(--highlight-color);
                 }
                 
-                div {
+                div:not(.login) {
                     margin-top: calc(var(--padding) / 2);
                     
                     display: flex;
                     align-items: center;
+                    gap: calc(var(--padding) / 2);
                 }
                 
                 error-message {
@@ -68,14 +72,28 @@ export default class AuthenticationForm extends HTMLElement {
                     visibility: hidden;
                 }
                 
+                .login {
+                    display: flex;
+                    gap: calc(var(--padding) / 4);
+                    align-items: center;
+                }
+                
+                spinning-indicator {
+                    opacity: 0.6;
+                }
+                
                 @container (max-width: 40ch) {
-                    div {
+                    div:not(.login) {
                         flex-direction: column-reverse;
                     }
                 
-                    button {
+                    .login {
                         width: 100%;
                         margin-bottom: calc(var(--padding) / 2);
+                    }
+                    
+                    button {
+                        flex: 1;
                     }
                     
                     error-message {
@@ -86,7 +104,7 @@ export default class AuthenticationForm extends HTMLElement {
             </style>
         `
 
-        const usernameInput = shadow.querySelector("#username-")
+        const usernameInput = shadow.querySelector("#username")
         const passwordInput = shadow.querySelector("#password")
         const loginButton = shadow.querySelector("#submit")
         const errorBanner = shadow.querySelector("error-message")
@@ -94,16 +112,17 @@ export default class AuthenticationForm extends HTMLElement {
         loginButton.onclick = async (event) => {
             event.preventDefault()
 
+            const spinner = document.createElement('spinning-indicator')
             loginButton.disabled = true
-            loginButton.innerText = 'Logging in…'
+            loginButton.parentElement.insertBefore(spinner, loginButton)
 
             try {
                 await this.login(usernameInput.value, passwordInput.value)
                 router.push(this.redirect())
             } catch (e) {
-                await new Promise(resolve => setTimeout(resolve, 250))
+                await new Promise(resolve => setTimeout(resolve, 200))
 
-                loginButton.innerText = 'Login'
+                loginButton.parentElement.removeChild(spinner)
                 loginButton.disabled = false
                 errorBanner.innerText = e.message
             }
