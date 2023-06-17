@@ -86,7 +86,7 @@ export default class SaveButton extends HTMLElement {
         if (!validateSession(response)) return
         if (!response.ok) throw {message: `Failed to save ${currentEntryName()}.`}
 
-        this.dispatchEvent(new CustomEvent('uploaded'))
+        this.dispatchEvent(new CustomEvent('saved'))
     }
 }
 

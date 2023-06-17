@@ -52,14 +52,15 @@ export default class TextEditor extends HTMLElement {
     }
 
     displayText() {
-        const input = document.createElement('textarea')
-        input.value = this.value
-        input.addEventListener('change', () => {
-            this.value = input.value
-            this.dispatchEvent(new CustomEvent('change'));
+        const text = document.createElement('textarea')
+        text.value = this.value
+        text.addEventListener('change', () => this.dispatchEvent(new CustomEvent('change')))
+        text.addEventListener('input', () => {
+            this.value = text.value
+            this.dispatchEvent(new CustomEvent('input'));
         })
 
-        this.updateContent(input)
+        this.updateContent(text)
     }
 
     updateContent(element) {

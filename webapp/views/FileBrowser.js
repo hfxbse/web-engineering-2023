@@ -94,14 +94,29 @@ export default class FileBrowser extends HTMLElement {
     }
 
     displayText(pathView, downloadButton, content) {
+        const textEditor = document.createElement('text-editor')
+        textEditor.value = content.content
+
+        textEditor.addEventListener('input', () => {
+            this.textControls({textEditor, downloadButton, pathView, content})
+        }, {once: true})
+
+        return textEditor
+    }
+
+    textControls({textEditor, downloadButton, pathView, content}) {
         const saveButton = document.createElement('save-button')
         saveButton.setAttribute('type', content.type)
         saveButton.value = this.contentToBlob(content)
 
-        this.addControl(pathView, saveButton)
+        saveButton.addEventListener('saved', () => {
+            pathView.removeChild(saveButton)
 
-        const textEditor = document.createElement('text-editor')
-        textEditor.value = content.content
+            textEditor.addEventListener('input', () => {
+                this.textControls({textEditor, downloadButton, pathView, content})
+            }, {once: true})
+        })
+
         textEditor.addEventListener('change', () => {
             const data = this.contentToBlob({...content.type, content: textEditor.value})
 
@@ -109,7 +124,7 @@ export default class FileBrowser extends HTMLElement {
             downloadButton.setAttribute('href', URL.createObjectURL(data))
         })
 
-        return textEditor
+        this.addControl(pathView, saveButton)
     }
 
     displayContent(shadow, placeholder, content, pathView) {
