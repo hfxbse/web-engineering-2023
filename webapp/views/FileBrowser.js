@@ -1,4 +1,5 @@
 import {authorizationHeader, sessionData, validateSession} from "/Session.js";
+import {currentEntryPath} from "/Path.js";
 import '/components/SpinnerIndicator.js'
 import '/components/error/ErrorMessage.js'
 import '/components/FileList.js'
@@ -118,7 +119,7 @@ export default class FileBrowser extends HTMLElement {
 
         if (!element) return
 
-        if (this.path().length > 0) {
+        if (currentEntryPath().length > 0) {
             this.addControl(pathView, document.createElement('delete-button'))
         }
 
@@ -134,13 +135,6 @@ export default class FileBrowser extends HTMLElement {
         errorElement.innerText = error.message ?? 'An unexpected error occurred.'
 
         placeholder.appendChild(errorElement)
-    }
-
-    path() {
-        let path = location.pathname.slice(userRoot().length).replace(/\/+/g, '/')
-        if (path.startsWith('/')) path = path.slice(1)
-
-        return path
     }
 
     folderView(pathView, content) {
@@ -187,7 +181,7 @@ export default class FileBrowser extends HTMLElement {
 
     async fetchContent() {
         const response = await this.catchNetworkError(async () => {
-            return await fetch(`http://localhost:8080/${this.path()}`, authorizationHeader());
+            return await fetch(`http://localhost:8080/${currentEntryPath()}`, authorizationHeader());
         })
 
         if (!validateSession(response)) return;
