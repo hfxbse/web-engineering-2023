@@ -7,7 +7,10 @@ class Router {
 
     route() {
         const matches = Object.keys(routes)
-            .map(key => ({name: key, match: routes[key].match()}))
+            .map(key => ({
+                name: key,
+                match: routes[key].match(this.removeDuplicatedSlashes(location.pathname))
+            }))
             .filter(route => route.match.match)
 
         matches.sort((a, b) => {
@@ -22,7 +25,11 @@ class Router {
         const route = routes[routeName];
         const tag = this.createTag(route);
 
-        if (match.redirect) history.pushState(undefined, undefined, match.redirect)
+        if (match.redirect) history.pushState(
+            undefined,
+            undefined,
+            this.removeDuplicatedSlashes(match.redirect)
+        )
 
         return tag;
     }
@@ -41,8 +48,12 @@ class Router {
     }
 
     push(url) {
-        history.pushState(undefined, undefined, url)
+        history.pushState(undefined, undefined, this.removeDuplicatedSlashes(url))
         if (this.pushCallback) this.pushCallback();
+    }
+
+    removeDuplicatedSlashes(path) {
+        return path.replace(/\/+/g, '/')
     }
 }
 

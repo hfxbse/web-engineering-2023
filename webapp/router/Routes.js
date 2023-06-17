@@ -21,12 +21,12 @@ export class Route {
 
 const authPath = '/auth'
 
-function isAuthPath() {
-    return new RegExp(`^\\${authPath}\/?$`).test(location.pathname)
+function isAuthPath(path) {
+    return new RegExp(`^\\${authPath}\/?$`).test(path)
 }
 
-function directoryRoot() {
-    return location.pathname === '/' || location.pathname.startsWith(userRoot())
+function directoryRoot(path) {
+    return path === '/' || path.startsWith(userRoot())
 }
 
 const routes = {
@@ -37,9 +37,9 @@ const routes = {
     }),
     auth: new Route({
         tag: 'authentication-form',
-        match: () => {
-            const redirect = !isAuthPath() ?
-                `${authPath}?redirect=${encodeURI(location.pathname + location.search)}` :
+        match: (path) => {
+            const redirect = !isAuthPath(path) ?
+                `${authPath}?redirect=${encodeURI(path + location.search)}` :
                 undefined;
 
             return new RouteMatch(!sessionActive(), redirect);
@@ -48,9 +48,9 @@ const routes = {
     }),
     files: new Route({
         tag: 'file-browser',
-        match: () => new RouteMatch(
-            directoryRoot() || isAuthPath() && sessionActive(),
-            isAuthPath() || location.pathname === '/' ? userRoot() : undefined
+        match: (path) => new RouteMatch(
+            directoryRoot(path) || isAuthPath(path) && sessionActive(),
+            isAuthPath(path) || path === '/' ? userRoot() : undefined
         ),
     })
 }

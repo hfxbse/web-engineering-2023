@@ -1,5 +1,5 @@
 export function currentEntryPath() {
-    return location.pathname.slice(1).split(/\/+/).slice(1).join('/');
+    return location.pathname.split(/\/+/).slice(2).join('/');
 }
 
 export function currentEntryName() {
