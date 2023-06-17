@@ -4,17 +4,6 @@ export default class TextEditor extends HTMLElement {
         this.value = ''
     }
 
-    static get observedAttributes() {
-        return ['value']
-    }
-
-    attributeChangedCallback(property, oldValue, newValue) {
-        if (oldValue === newValue) return;
-        this[property] = newValue;
-
-        if (this.content) this.displayText()
-    }
-
     connectedCallback() {
         const shadow = this.attachShadow({mode: 'closed'})
 
@@ -47,28 +36,19 @@ export default class TextEditor extends HTMLElement {
             </style>
         `
 
-        this.content = shadow.querySelector('textarea')
-        this.displayText()
-    }
-
-    displayText() {
-        const text = document.createElement('textarea')
-        text.value = this.value
-        text.addEventListener('change', () => this.dispatchEvent(new CustomEvent('change')))
-        text.addEventListener('input', () => {
-            this.value = text.value
+        this.input = shadow.querySelector('textarea')
+        this.input.addEventListener('change', () => this.dispatchEvent(new CustomEvent('change')))
+        this.input.addEventListener('input', () => {
+            this.value = this.input.value
             this.dispatchEvent(new CustomEvent('input'));
         })
 
-        this.updateContent(text)
+        this.displayText(this.value)
     }
 
-    updateContent(element) {
-        const parent = this.content.parentNode
-        parent.removeChild(this.content)
-
-        parent.appendChild(element)
-        this.content = element
+    displayText(text) {
+        this.input.value = text
+        this.value = text
     }
 }
 

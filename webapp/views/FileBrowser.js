@@ -12,6 +12,7 @@ import '/components/controls/DownloadButton.js'
 import '/components/controls/UploadButton.js'
 import '/components/controls/DeleteButton.js'
 import '/components/controls/SaveButton.js'
+import '/components/controls/UndoButton.js'
 
 export function userRoot() {
     return `/@${sessionData().user}`
@@ -105,16 +106,33 @@ export default class FileBrowser extends HTMLElement {
     }
 
     textControls({textEditor, downloadButton, pathView, content}) {
+        const undoButton = document.createElement('undo-button')
+
         const saveButton = document.createElement('save-button')
         saveButton.setAttribute('type', content.type)
         saveButton.value = this.contentToBlob(content)
 
-        saveButton.addEventListener('saved', () => {
+        const removeControls = (value) => {
+            pathView.removeChild(undoButton)
             pathView.removeChild(saveButton)
 
             textEditor.addEventListener('input', () => {
-                this.textControls({textEditor, downloadButton, pathView, content})
+                this.textControls({
+                    textEditor,
+                    downloadButton,
+                    pathView,
+                    content: {
+                        ...content,
+                        content: value
+                    }
+                })
             }, {once: true})
+        }
+
+        saveButton.addEventListener('saved', () => removeControls(textEditor.value))
+        undoButton.addEventListener('click', () => {
+            removeControls(content.content)
+            textEditor.displayText(content.content)
         })
 
         textEditor.addEventListener('change', () => {
@@ -125,6 +143,7 @@ export default class FileBrowser extends HTMLElement {
         })
 
         this.addControl(pathView, saveButton)
+        this.addControl(pathView, undoButton)
     }
 
     displayContent(shadow, placeholder, content, pathView) {
@@ -228,7 +247,6 @@ export default class FileBrowser extends HTMLElement {
         try {
             return await runner();
         } catch (e) {
-            console.dir(e)
             throw {message: "Could not load entry due to a network error.", reason: e}
         }
     }
