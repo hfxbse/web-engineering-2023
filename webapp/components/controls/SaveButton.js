@@ -3,8 +3,13 @@ import '/components/controls/ControlElement.js'
 import {currentEntryName, currentEntryPath} from "/Path.js";
 
 export default class SaveButton extends HTMLElement {
+    constructor() {
+        super();
+        this.value = new Blob()
+    }
+
     static get observedAttributes() {
-        return ['src', 'type']
+        return ['type']
     }
 
     attributeChangedCallback(property, oldValue, newValue) {
@@ -61,7 +66,7 @@ export default class SaveButton extends HTMLElement {
         let response
         try {
             const content = new File(
-                [await (await fetch(this.src)).blob()],
+                [await this.value.text()],
                 currentEntryName(),
                 {type: this.type}
             )

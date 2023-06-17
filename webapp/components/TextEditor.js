@@ -1,6 +1,11 @@
 export default class TextEditor extends HTMLElement {
+    constructor() {
+        super();
+        this.value = ''
+    }
+
     static get observedAttributes() {
-        return ['src']
+        return ['value']
     }
 
     attributeChangedCallback(property, oldValue, newValue) {
@@ -47,34 +52,14 @@ export default class TextEditor extends HTMLElement {
     }
 
     displayText() {
-        fetch(this.src)
-            .then(async (response) => {
-                if (!response.ok) {
-                    this.displayError('Unexpected error occurred while loading file.')
-                    return
-                }
+        const input = document.createElement('textarea')
+        input.value = this.value
+        input.addEventListener('change', () => {
+            this.value = input.value
+            this.dispatchEvent(new CustomEvent('change'));
+        })
 
-                const input = document.createElement('textarea')
-                input.value = await response.text()
-                input.addEventListener('change', () => this.dispatchEvent(
-                    new CustomEvent('change', {
-                        detail: {
-                            url: URL.createObjectURL(new Blob([input.value]))
-                        }
-                    })
-                ))
-
-                this.updateContent(input)
-            })
-            .catch(() => this.displayError('Could not load file.'))
-    }
-
-    displayError(message) {
-        const errorMessage = document.createElement('error-message')
-        errorMessage.setAttribute('message', message)
-        errorMessage.setAttribute('class', 'content')
-
-        this.updateContent(errorMessage)
+        this.updateContent(input)
     }
 
     updateContent(element) {

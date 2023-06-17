@@ -88,16 +88,24 @@ export default class FileBrowser extends HTMLElement {
         })
     }
 
+    contentToBlob(content) {
+        return new Blob([content.content], {type: content.type})
+    }
+
     displayText(pathView, downloadButton, content) {
         const saveButton = document.createElement('save-button')
-        saveButton.setAttribute('src', content.content)
         saveButton.setAttribute('type', content.type)
+        saveButton.value = this.contentToBlob(content)
+
         this.addControl(pathView, saveButton)
 
         const textEditor = document.createElement('text-editor')
-        textEditor.addEventListener('change', (event) => {
-            downloadButton.setAttribute('href', event.detail.url)
-            saveButton.setAttribute('src', event.detail.url)
+        textEditor.value = content.content
+        textEditor.addEventListener('change', () => {
+            const data = this.contentToBlob({...content.type, content: textEditor.value})
+
+            saveButton.value = data
+            downloadButton.setAttribute('href', URL.createObjectURL(data))
         })
 
         return textEditor
@@ -147,9 +155,19 @@ export default class FileBrowser extends HTMLElement {
         return fileList
     }
 
+    contentDownloadURL(content) {
+        if (content.type.startsWith("text/")) {
+            return URL.createObjectURL(
+                new Blob([content.content], {type: content.type})
+            )
+        } else {
+            return content.content
+        }
+    }
+
     fileView(pathView, placeholder, content) {
         const downloadButton = document.createElement('download-button');
-        downloadButton.setAttribute('href', content.content)
+        downloadButton.setAttribute('href', this.contentDownloadURL(content))
         this.addControl(pathView, downloadButton)
 
         let fileView
@@ -183,11 +201,17 @@ export default class FileBrowser extends HTMLElement {
         return await this.catchNetworkError(async () => {
             if (contentType.startsWith('text/html'))
                 return {type: 'directory', content: await response.json()}
-            else
+            else if (contentType.startsWith('text/')) {
                 return {
-                    type: contentType.startsWith('text/plain') ? 'text/plain' : contentType,
+                    type: contentType,
+                    content: await response.text()
+                }
+            } else {
+                return {
+                    type: contentType,
                     content: URL.createObjectURL(await response.blob())
                 }
+            }
         })
     }
 
@@ -195,7 +219,8 @@ export default class FileBrowser extends HTMLElement {
         try {
             return await runner();
         } catch (e) {
-            throw {message: "Could not load directory due to a network error.", reason: e}
+            console.dir(e)
+            throw {message: "Could not load entry due to a network error.", reason: e}
         }
     }
 
