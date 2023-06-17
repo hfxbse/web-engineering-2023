@@ -88,54 +88,27 @@ export default class FileBrowser extends HTMLElement {
         })
     }
 
+    displayText(pathView, downloadButton, content) {
+        const saveButton = document.createElement('save-button')
+        saveButton.setAttribute('src', content.content)
+        saveButton.setAttribute('type', content.type)
+        this.addControl(pathView, saveButton)
+
+        const textEditor = document.createElement('text-editor')
+        textEditor.addEventListener('change', (event) => {
+            downloadButton.setAttribute('href', event.detail.url)
+            saveButton.setAttribute('src', event.detail.url)
+        })
+
+        return textEditor
+    }
+
     displayContent(shadow, placeholder, content, pathView) {
-        let element;
+        let element = content.type === 'directory' ?
+            this.folderView(pathView, content) :
+            this.fileView(pathView, placeholder, content)
 
-        if (content.type === 'directory') {
-            element = document.createElement(`file-list`)
-
-            this.displayDirectory(element, content)
-
-            const uploadButton = document.createElement('upload-button')
-            uploadButton.addEventListener('uploaded', async () => {
-                while (true) {
-                    try {
-                        const content = await this.fetchContent()
-                        this.displayDirectory(element, content)
-                        return
-                    } catch (e) {
-                        await new Promise(resolve => setTimeout(resolve, 100))
-                    }
-                }
-            })
-
-            this.addControl(pathView, uploadButton)
-        } else {
-            const downloadButton = document.createElement('download-button');
-            downloadButton.setAttribute('href', content.content)
-            this.addControl(pathView, downloadButton)
-
-            if (/^(image|audio|video)\//.test(content.type)) {
-                element = document.createElement('media-view')
-                element.setAttribute('type', content.type)
-            } else if (/^text\//.test(content.type)) {
-                const saveButton = document.createElement('save-button')
-                saveButton.setAttribute('src', content.content)
-                saveButton.setAttribute('type', content.type)
-                this.addControl(pathView, saveButton)
-
-                element = document.createElement('text-editor')
-                element.addEventListener('change', (event) => {
-                    downloadButton.setAttribute('href', event.detail.url)
-                    saveButton.setAttribute('src', event.detail.url)
-                })
-            } else {
-                this.displayError(placeholder, {message: 'Preview not available.'})
-                return
-            }
-
-            element.setAttribute('src', content.content)
-        }
+        if (!element) return
 
         if (this.path().length > 0) {
             this.addControl(pathView, document.createElement('delete-button'))
@@ -160,6 +133,38 @@ export default class FileBrowser extends HTMLElement {
         if (path.startsWith('/')) path = path.slice(1)
 
         return path
+    }
+
+    folderView(pathView, content) {
+        const fileList = document.createElement(`file-list`)
+
+        const uploadButton = document.createElement('upload-button')
+        uploadButton.addEventListener('uploaded', () => this.updateContent(fileList))
+
+        this.displayDirectory(fileList, content)
+        this.addControl(pathView, uploadButton)
+
+        return fileList
+    }
+
+    fileView(pathView, placeholder, content) {
+        const downloadButton = document.createElement('download-button');
+        downloadButton.setAttribute('href', content.content)
+        this.addControl(pathView, downloadButton)
+
+        let fileView
+        if (/^(image|audio|video)\//.test(content.type)) {
+            fileView = document.createElement('media-view')
+            fileView.setAttribute('type', content.type)
+        } else if (/^text\//.test(content.type)) {
+            fileView = this.displayText(pathView, downloadButton, content)
+        } else {
+            this.displayError(placeholder, {message: 'Preview not available.'})
+            return
+        }
+
+        fileView.setAttribute('src', content.content)
+        return fileView;
     }
 
     async fetchContent() {
@@ -191,6 +196,18 @@ export default class FileBrowser extends HTMLElement {
             return await runner();
         } catch (e) {
             throw {message: "Could not load directory due to a network error.", reason: e}
+        }
+    }
+
+    async updateContent(element) {
+        while (true) {
+            try {
+                const content = await this.fetchContent()
+                this.displayDirectory(element, content)
+                return
+            } catch (e) {
+                await new Promise(resolve => setTimeout(resolve, 100))
+            }
         }
     }
 }
