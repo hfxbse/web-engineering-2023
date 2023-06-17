@@ -1,10 +1,17 @@
 import {authorizationHeader, validateSession} from "/Session.js";
-import {currentEntryName, currentEntryPath, parentDirectoryURL} from "/Path.js";
 import '/components/controls/ControlElement.js'
-import '/components/error/ErrorDialog.js'
-import router from "/router/Router.js";
+import {currentEntryName, currentEntryPath} from "/Path.js";
 
-export default class DeleteButton extends HTMLElement {
+export default class SaveButton extends HTMLElement {
+    static get observedAttributes() {
+        return ['src', 'type']
+    }
+
+    attributeChangedCallback(property, oldValue, newValue) {
+        if (oldValue === newValue) return;
+        this[property] = newValue;
+    }
+
     connectedCallback() {
         const shadow = this.attachShadow({mode: 'closed'})
         shadow.innerHTML = `
@@ -17,10 +24,10 @@ export default class DeleteButton extends HTMLElement {
             <button>
                 <control-element class="control">
                     <link rel="stylesheet" href="/components/controls/controls.css">
-                    <span class="material-symbols-outlined icon">delete</span>
+                    <span class="material-symbols-outlined icon">save</span>
                 </control-element>
             </button>
-
+            
             <error-dialog></error-dialog>
             
             <style>
@@ -30,46 +37,52 @@ export default class DeleteButton extends HTMLElement {
             </style>
         `
 
+        const button = shadow.querySelector('button')
         const controlElement = shadow.querySelector('control-element')
         const errorDialog = shadow.querySelector('error-dialog')
-        const button = shadow.querySelector('button')
 
         button.addEventListener('click', async () => {
-            button.setAttribute('disabled', 'disabled')
             controlElement.setAttribute('working', 'working')
+            button.setAttribute('disabled', 'disabled')
 
             try {
-                await this.deleteEntry()
+                await this.overwrite()
             } catch (e) {
                 errorDialog.innerText = e.message
                 errorDialog.showModal()
             }
 
-            controlElement.removeAttribute('working')
             button.removeAttribute('disabled')
+            controlElement.removeAttribute('working')
         })
     }
 
-    async deleteEntry() {
+    async overwrite() {
         let response
-
         try {
+            const content = new File(
+                [await (await fetch(this.src)).blob()],
+                currentEntryName(),
+                {type: this.type}
+            )
+
+            const form = new FormData()
+            form.append('newFile', content)
+
             response = await fetch(`http://localhost:8080/${currentEntryPath()}`, {
-                method: 'DELETE',
+                method: 'POST',
+                body: form,
                 ...authorizationHeader()
             })
         } catch (e) {
-            throw {message: `Could not delete ${currentEntryName()}.`}
+            throw {message: `Could not save ${currentEntryName()}.`}
         }
 
         if (!validateSession(response)) return
+        if (!response.ok) throw {message: `Failed to save ${currentEntryName()}.`}
 
-        if (!response.ok) {
-            throw {message: `Failed to delete ${currentEntryName()}.`}
-        }
-
-        router.push(parentDirectoryURL())
+        this.dispatchEvent(new CustomEvent('uploaded'))
     }
 }
 
-customElements.define('delete-button', DeleteButton)
+customElements.define('save-button', SaveButton)

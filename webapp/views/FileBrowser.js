@@ -10,6 +10,7 @@ import '/components/controls/LogoutButton.js'
 import '/components/controls/DownloadButton.js'
 import '/components/controls/UploadButton.js'
 import '/components/controls/DeleteButton.js'
+import '/components/controls/SaveButton.js'
 
 export function userRoot() {
     return `/@${sessionData().user}`
@@ -118,7 +119,16 @@ export default class FileBrowser extends HTMLElement {
                 element = document.createElement('media-view')
                 element.setAttribute('type', content.type)
             } else if (/^text\//.test(content.type)) {
+                const saveButton = document.createElement('save-button')
+                saveButton.setAttribute('src', content.content)
+                saveButton.setAttribute('type', content.type)
+                this.addControl(pathView, saveButton)
+
                 element = document.createElement('text-editor')
+                element.addEventListener('change', (event) => {
+                    downloadButton.setAttribute('href', event.detail.url)
+                    saveButton.setAttribute('src', event.detail.url)
+                })
             } else {
                 this.displayError(placeholder, {message: 'Preview not available.'})
                 return

@@ -56,6 +56,13 @@ export default class TextEditor extends HTMLElement {
 
                 const input = document.createElement('textarea')
                 input.value = await response.text()
+                input.addEventListener('change', () => this.dispatchEvent(
+                    new CustomEvent('change', {
+                        detail: {
+                            url: URL.createObjectURL(new Blob([input.value]))
+                        }
+                    })
+                ))
 
                 this.updateContent(input)
             })
