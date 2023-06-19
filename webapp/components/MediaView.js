@@ -30,6 +30,8 @@ export default class MediaView extends HTMLElement {
                 img, video, audio {
                     max-height: 100%;
                     max-width: 100%;
+                    
+                    overflow: hidden;
                 }
             </style>
         `
