@@ -150,11 +150,13 @@ export default class CreateButton extends HTMLElement {
         cancelButton.addEventListener('click', () => this.closeDialog(dialog, errorMessage, nameInput))
 
         nameInput.addEventListener('input', () => {
-            if(/\//.test(nameInput.value)) {
+            if (/\//.test(nameInput.value)) {
                 errorMessage.innerText = 'Entry name cannot contain /'
                 submitButton.setAttribute('disabled', 'disabled')
-            }
-            else if (nameInput.value.length < 1) {
+            } else if (nameInput.value === "." || nameInput.value === "..") {
+                errorMessage.innerText = `Entry name cannot be "${nameInput.value}".`
+                submitButton.setAttribute('disabled', 'disabled')
+            } else if (nameInput.value.length < 1) {
                 errorMessage.innerText = 'Entry name cannot be empty.'
                 submitButton.setAttribute('disabled', 'disabled')
             } else {
