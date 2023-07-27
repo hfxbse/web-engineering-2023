@@ -19,7 +19,7 @@ docker run -p 8080:8080 ghcr.io/hfxbse/web-engineering-2023-fileservice:latest
 and the frontend server via
 
 ```bash
-docker run -p <any port you like>:80 ghcr.io/hfxbse/web-engineering-2023-fileservice:latest
+docker run -p <any port you like>:80 ghcr.io/hfxbse/web-engineering-2023-frontend:latest
 ```
 
 The website should now be reachable via
