@@ -25,8 +25,8 @@ docker run -p <any port you like>:80 ghcr.io/hfxbse/web-engineering-2023-fileser
 The website should now be reachable via
 [http://localhost:\<your chosen port\>](http://localhost:<your%20chosen%20port>).
 
-As an alternative, you can build the Docker images locally, but if you choose to do so,
-I assume you know how to do that.
+As an alternative, you can build the Docker image for each service locally from the provided Docker 
+files. If you choose to do so, I assume you know how to do that.
 
 
 
@@ -41,13 +41,13 @@ The content of the website scales down to about 600 pixels in width without issu
 
 ## Usage
 
-The website provides a frontend for a file-storage service. The UI resamples commonly found on websites.
-A blue tone is used as a highlight color and red to indicate errors. Other elements are kept black.
+The website provides a frontend for a file-storage service. The UI resamples elements commonly found on 
+websites. A blue tone is used as a highlight color and red to indicate errors. Other elements are kept black.
 
 
 ### Authentication
 
-To login, you first enter your username and then your password. Then you click on the blue
+To log in, you first enter your username and then your password. Then you click on the blue
 button labeled "Login". If your credentials are incorrect, or you could not log in for any other reason, an error 
 message is shown below the form, as shown in the picture.
 
@@ -79,9 +79,9 @@ current location.
 | ![Create](docs/control-buttons/creation.png)   | Opens the entry creation dialog.                                                             | The content is a directory.                             |
 | ![Delete](docs/control-buttons/delete.png)     | Deletes the content at the current path. Only empty directories can be deleted successfully. | The entry exists and is not the content root.           |
 | ![Download](docs/control-buttons/download.png) | Saves the file at the current location to disk.                                              | The entry exists and is not a directory.                |
-| ![Revert](docs/control-buttons/revert.png)     | Reverts the text file to the last saved state.                                               | The content is a text file to which changes where made. |
-| ![Save](docs/control-buttons/save.png)         | Saves the changes made to the text file on the server.                                       | The content is a text file to which changes where made. |
-| ![Upload](docs/control-buttons/upload.png)     | Uploads a file you select through your systems native file picker to the server.             | The content is a directory.                             |
+| ![Revert](docs/control-buttons/revert.png)     | Reverts the text file to the last saved state.                                               | The content is a text file to which changes were made. |
+| ![Save](docs/control-buttons/save.png)         | Saves the changes made to the text file on the server.                                       | The content is a text file to which changes were made. |
+| ![Upload](docs/control-buttons/upload.png)     | Uploads a file you select through your system's native file picker to the server.             | The content is a directory.                             |
 
 
 ### Directories
@@ -91,7 +91,7 @@ has a type represented by an icon. Below the icon, the name of the corresponding
 
 ![Directory view](docs/directoryView.png)
 
-#### Entry type icons
+#### Entry-type icons
 
 | Icon                                                        | Type      | Navigation target                      |
 |-------------------------------------------------------------|-----------|----------------------------------------|
@@ -137,16 +137,16 @@ bottom of the page.
 ![File not found page](docs/fileNotFound.png)
 
 
-### Accessing a page which is not part of the website
+### Accessing a page that is not part of the website
 
-In case you try to access a page which is not part of the website, a simple "404 - Page not found."-page is shown.
+In case you try to access a page that is not part of the website, a simple "404 - Page not found."-page is shown.
 
 ![Page not found page](docs/pageNotFound.png)
 
 
 ### Error dialog
 
-If an action without its own dialog, like the delete action or file upload, fails, an error dialog is displayed for it.
+If an action without a dialog, like the delete action or file upload, fails, an error dialog is displayed for it.
 It can be closed by either clicking on the button labeled "Ok" or by pressing "Esc" on your keyboard.
 
 ![Error dialog](docs/errorDialog.png)
