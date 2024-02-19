@@ -13,13 +13,13 @@ As required, the frontend does not use any framework or library. Instead, it lev
 Start the backend service via
 
 ```bash
-docker run -p 8080:8080 ghcr.io/hfxbse/web-engineering-2023-fileservice:latest
+docker run -p 8080:8080 ghcr.io/hfxbse/web-engineering-2023/file-service:latest
 ```
 
 and the frontend server via
 
 ```bash
-docker run -p <any port you like>:80 ghcr.io/hfxbse/web-engineering-2023-frontend:latest
+docker run -p <any port you like>:80 ghcr.io/hfxbse/web-engineering-2023/web-app:latest
 ```
 
 The website should now be reachable via
@@ -79,9 +79,9 @@ current location.
 | ![Create](docs/control-buttons/creation.png)   | Opens the entry creation dialog.                                                             | The content is a directory.                             |
 | ![Delete](docs/control-buttons/delete.png)     | Deletes the content at the current path. Only empty directories can be deleted successfully. | The entry exists and is not the content root.           |
 | ![Download](docs/control-buttons/download.png) | Saves the file at the current location to disk.                                              | The entry exists and is not a directory.                |
-| ![Revert](docs/control-buttons/revert.png)     | Reverts the text file to the last saved state.                                               | The content is a text file to which changes were made. |
-| ![Save](docs/control-buttons/save.png)         | Saves the changes made to the text file on the server.                                       | The content is a text file to which changes were made. |
-| ![Upload](docs/control-buttons/upload.png)     | Uploads a file you select through your system's native file picker to the server.             | The content is a directory.                             |
+| ![Revert](docs/control-buttons/revert.png)     | Reverts the text file to the last saved state.                                               | The content is a text file to which changes were made.  |
+| ![Save](docs/control-buttons/save.png)         | Saves the changes made to the text file on the server.                                       | The content is a text file to which changes were made.  |
+| ![Upload](docs/control-buttons/upload.png)     | Uploads a file you select through your system's native file picker to the server.            | The content is a directory.                             |
 
 
 ### Directories

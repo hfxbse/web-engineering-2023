@@ -1,0 +1,28 @@
+name: "web-app-builder"
+run-name: "Web app builder"
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - web-app/**
+jobs:
+  build-file-service:
+    runs-on: ubuntu-latest
+
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        name: "Checkout repository"
+        with:
+          sparse-checkout: web-app
+
+      - uses: VaultVulp/gp-docker-action@1.6.0
+        name: "Build and upload Docker image"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          image-name: web-app
+          build-context: web-app
