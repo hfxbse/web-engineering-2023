@@ -163,3 +163,10 @@ If an error occurs, you will be informed below the dialog. An entry name cannot 
 ("..") or contain slashes ("/").
 
 ![Creation dialog](docs/creationDialog.png)
+
+
+
+## License
+
+The license stated in the `LICENSE.md` applies to all files but those under `./file-service`, excluding 
+`./file-service/Dockerfile`, to which it applies too.
